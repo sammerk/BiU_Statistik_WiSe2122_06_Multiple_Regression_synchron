@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>BiU - Statistik</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Samuel Merk" />
+    <meta name="date" content="2022-01-17" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+    <script src="libs/typed-2.0.11/typed.min.js"></script>
+    <script src="libs/typed-binding-0.0.3/typed.js"></script>
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+    <script src="libs/plotly-binding-4.10.0/plotly.js"></script>
+    <script src="libs/typedarray-0.1/typedarray.min.js"></script>
+    <script src="libs/jquery-3.5.1/jquery.min.js"></script>
+    <link href="libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: hide_logo center middle
+&lt;script src="https://kit.fontawesome.com/994a28441d.js" crossorigin="anonymous"&gt;&lt;/script&gt;
+
+
+<div>
+<style type="text/css">.xaringan-extra-logo {
+width: 80px;
+height: 128px;
+z-index: 0;
+background-image: url(https://apps.samuel-merk.de/data/PHK_2018_Logo_V1_FARBE_NUR_PH.svg);
+background-size: contain;
+background-repeat: no-repeat;
+position: absolute;
+top:1em;right:1em;
+}
+</style>
+<script>(function () {
+  let tries = 0
+  function addLogo () {
+    if (typeof slideshow === 'undefined') {
+      tries += 1
+      if (tries < 10) {
+        setTimeout(addLogo, 100)
+      }
+    } else {
+      document.querySelectorAll('.remark-slide-content:not(.title-slide):not(.inverse):not(.hide_logo)')
+        .forEach(function (slide) {
+          const logo = document.createElement('div')
+          logo.classList = 'xaringan-extra-logo'
+          logo.href = null
+          slide.appendChild(logo)
+        })
+    }
+  }
+  document.addEventListener('DOMContentLoaded', addLogo)
+})()</script>
+</div>
+
+
+# Universaltool multiple Regression
+&lt;img src="index_files/figure-html/unnamed-chunk-2-1.png" width="40%" style="display: block; margin: auto;" /&gt;
+
+
+### Statistik-Vorlesung Sitzung 06 - Samuel Merk - PH Karlsruhe
+
+---  
+<span id="htmlwidget-8619c0902875f73e40fc" class="typed html-widget"></span>
+<script type="application/json" data-for="htmlwidget-8619c0902875f73e40fc">{"x":{"strings":["Hallo, 💚-lich Willkommen!","Heute lernen wir dummykodierte Regressionsmodelle zu spezifizieren..."],"contentType":"html","typeSpeed":80,"backSpeed":20,"backDelay":3000,"loop":true},"evals":[],"jsHooks":[]}</script> 
+
+---
+## Mein Plan für heute:
+* Fragen zur multiplen Regression
+* Einführung »Dummykodierung«
+* Übung »Dummykodierung«
+
+
+---
+class: hide_logo
+
+## Ihre Fragen zur multiplen Regression (Video, Tutorial, Aufgaben)
+&gt; Bitte stellen Sie Ihre Fragen unter https://bit.ly/merk015 und voten Sie die Fragen Ihrer Kommiliton\*innen.
+
+&amp;nbsp;
+
+&lt;img src="index_files/figure-html/unnamed-chunk-3-1.png" width="30%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+# Einführung Dummykodierung
+.pull-left[
+Ausgangsproblem: Aufnahme von nicht-metrischen Prädiktoren in Regressionsmodelle
+Beispiel 1:
+&lt;table class="table table-striped" style="width: auto !important; "&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;"&gt; AV &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Sex &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; w &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; w &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+--
+
+.pull-right[
+Problemlösung durch "0/1-Rekodierung" 
+&lt;table class="table table-striped" style="width: auto !important; "&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;"&gt; AV &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; Sex &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; ISex &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; w &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; w &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; m &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+--
+&lt;br&gt;&lt;br&gt;
+&gt; AA &lt;i class="fas fa-brain"&gt;&lt;/i&gt;: Skizzieren Sie das Regressionsmodell `\(AV = b_0 + b_1 \cdot ISex\)` das sich aus den Daten ergibt und interpretieren Sie `\(b_0\)` und `\(b_1\)` inhaltlich.
+
+---
+## Graphische Lösung Beispiel 1
+.pull-left[
+&lt;img src="index_files/figure-html/unnamed-chunk-6-1.png" width="100%" /&gt;
+]
+
+--
+.pull-right[
+* `\(b_0\)` entspricht MW der Gruppe ISex == 0
+* `\(b_1\)` entspricht MW Differenz der Gruppen ISex == 1 und ISex == 0
+]
+
+---
+## Einführung Dummykodierung: Lösung Beispiel 1 mit `lm()`
+Die `lm()` bildet glücklicherweise automatisch Dummyvariablen
+
+```r
+lm(AV ~ Sex, data = data_d_demo1)
+```
+
+```
+## 
+## Call:
+## lm(formula = AV ~ Sex, data = data_d_demo1)
+## 
+## Coefficients:
+## (Intercept)         Sexw  
+##         1.5          1.0
+```
+
+---
+## Einführung Dummykodierung: Beispiel 2
+Problem: Nominaler Prädiktor mit drei Ausprägungen
+&lt;table class="table table-striped" style="width: auto !important; "&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;"&gt; AV &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; UV &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; A &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; A &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; B &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; B &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; C &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; C &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+## Einführung Dummykodierung: Beispiel 2
+Problemlösung durch "0/1-Rekodierung in zwei Variablen":
+&lt;table class="table table-striped" style="width: auto !important; "&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:center;"&gt; AV &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; UV &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; IUVB &lt;/th&gt;
+   &lt;th style="text-align:center;"&gt; IUVC &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; C &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:center;"&gt; 2 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; C &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 0 &lt;/td&gt;
+   &lt;td style="text-align:center;"&gt; 1 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+##  Graphische Lösung Beispiel 2
+
+.pull-left[
+<div id="htmlwidget-2f4fce85c12ce3643a5d" style="width:90%;height:504px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2f4fce85c12ce3643a5d">{"x":{"visdat":{"172e43958cb39":["function () ","plotlyVisDat"]},"cur_data":"172e43958cb39","attrs":{"172e43958cb39":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"z":{},"type":"scatter3d","mode":"markers","marker":{"size":4,"color":"#37414b","symbol":104},"inherit":true},"172e43958cb39.1":{"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"z":{},"type":"surface","x":{},"y":{},"opacity":0.8,"colorscale":["#a51e41"],"contours":{"x":{"highlight":false},"y":{"highlight":false},"z":{"highlight":false}},"showscale":false,"inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"spikesides":false,"showspikes":true,"title":"IUVB"},"yaxis":{"spikesides":false,"showspikes":true,"title":"IUVC"},"zaxis":{"spikesides":false,"showspikes":true,"title":"AV"}},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[0,0,1,1,0,0],"y":[0,0,0,0,1,1],"z":[2,3,0,1,1,2],"type":"scatter3d","mode":"markers","marker":{"color":"#37414b","size":4,"symbol":104,"line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"frame":null},{"colorbar":{"title":"AV<br />Regressionsebene","ticklen":2},"colorscale":["#a51e41"],"showscale":false,"z":[[2.5,2.4,2.3,2.2,2.1,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.4,0.3],[2.45,2.35,2.25,2.15,2.05,1.95,1.85,1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.35,0.25],[2.4,2.3,2.2,2.1,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2],[2.35,2.25,2.15,2.05,1.95,1.85,1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.35,0.25,0.15],[2.3,2.2,2.1,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.0999999999999996],[2.25,2.15,2.05,1.95,1.85,1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.35,0.25,0.15,0.0499999999999996],[2.2,2.1,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.0999999999999996,-4.9960036108132e-16],[2.15,2.05,1.95,1.85,1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.35,0.25,0.15,0.0499999999999995,-0.0500000000000005],[2.1,2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.0999999999999996,-4.44089209850063e-16,-0.100000000000001],[2.05,1.95,1.85,1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.35,0.25,0.149999999999999,0.0499999999999996,-0.0500000000000005,-0.150000000000001],[2,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.0999999999999994,-4.44089209850063e-16,-0.100000000000001,-0.200000000000001],[1.95,1.85,1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.35,0.25,0.149999999999999,0.0499999999999994,-0.0500000000000005,-0.150000000000001,-0.250000000000001],[1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.499999999999999,0.4,0.299999999999999,0.199999999999999,0.0999999999999993,-7.7715611723761e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001],[1.85,1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.35,0.25,0.149999999999999,0.0499999999999994,-0.0500000000000007,-0.150000000000001,-0.250000000000001,-0.350000000000001],[1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999993,-7.7715611723761e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001],[1.75,1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.349999999999999,0.25,0.149999999999999,0.0499999999999994,-0.0500000000000007,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001],[1.7,1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.399999999999999,0.299999999999999,0.2,0.0999999999999994,-6.66133814775094e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001],[1.65,1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999993,-0.0500000000000008,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001],[1.6,1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999994,-6.66133814775094e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001],[1.55,1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999993,-0.0500000000000008,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001],[1.5,1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999992,-6.66133814775094e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000001],[1.45,1.35,1.25,1.15,1.05,0.95,0.85,0.75,0.65,0.55,0.45,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999992,-0.0500000000000007,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000001],[1.4,1.3,1.2,1.1,1,0.9,0.8,0.7,0.6,0.5,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999992,-8.88178419700125e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000001,-0.800000000000001],[1.35,1.25,1.15,1.05,0.949999999999999,0.85,0.749999999999999,0.649999999999999,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999989,-0.0500000000000012,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000001,-0.850000000000001],[1.3,1.2,1.1,0.999999999999999,0.899999999999999,0.8,0.699999999999999,0.599999999999999,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.099999999999999,-1.11022302462516e-15,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000001,-0.800000000000001,-0.900000000000001],[1.25,1.15,1.05,0.95,0.849999999999999,0.75,0.649999999999999,0.549999999999999,0.45,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999992,-0.0500000000000009,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000001,-0.850000000000001,-0.950000000000001],[1.2,1.1,1,0.899999999999999,0.799999999999999,0.7,0.599999999999999,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999992,-8.88178419700125e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000001,-0.800000000000001,-0.900000000000001,-1],[1.15,1.05,0.95,0.849999999999999,0.749999999999999,0.65,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999992,-0.0500000000000009,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000001,-0.850000000000001,-0.950000000000001,-1.05],[1.1,0.999999999999999,0.899999999999999,0.799999999999999,0.699999999999999,0.599999999999999,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.099999999999999,-1.11022302462516e-15,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000002,-0.800000000000002,-0.900000000000001,-1,-1.1],[1.05,0.949999999999999,0.849999999999999,0.749999999999999,0.649999999999999,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999989,-0.0500000000000012,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000002,-0.850000000000002,-0.950000000000002,-1.05,-1.15],[1,0.899999999999999,0.799999999999999,0.699999999999999,0.599999999999999,0.5,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999992,-8.88178419700125e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000001,-0.800000000000001,-0.900000000000001,-1,-1.1,-1.2],[0.95,0.849999999999999,0.749999999999999,0.649999999999999,0.549999999999999,0.45,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999992,-0.0500000000000009,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000001,-0.850000000000001,-0.950000000000002,-1.05,-1.15,-1.25],[0.899999999999999,0.799999999999999,0.699999999999999,0.599999999999999,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999992,-8.88178419700125e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000001,-0.800000000000001,-0.900000000000001,-1,-1.1,-1.2,-1.3],[0.849999999999999,0.749999999999999,0.649999999999999,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999989,-0.0500000000000012,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000002,-0.550000000000002,-0.650000000000001,-0.750000000000002,-0.850000000000002,-0.950000000000002,-1.05,-1.15,-1.25,-1.35],[0.799999999999999,0.699999999999999,0.599999999999999,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999988,-1.11022302462516e-15,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000002,-0.600000000000002,-0.700000000000002,-0.800000000000002,-0.900000000000002,-1,-1.1,-1.2,-1.3,-1.4],[0.749999999999999,0.649999999999999,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999989,-0.0500000000000009,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000001,-0.850000000000001,-0.950000000000002,-1.05,-1.15,-1.25,-1.35,-1.45],[0.699999999999999,0.599999999999999,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.099999999999999,-1.11022302462516e-15,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000002,-0.800000000000001,-0.900000000000001,-1,-1.1,-1.2,-1.3,-1.4,-1.5],[0.649999999999999,0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999989,-0.0500000000000012,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000001,-0.550000000000001,-0.650000000000001,-0.750000000000002,-0.850000000000001,-0.950000000000002,-1.05,-1.15,-1.25,-1.35,-1.45,-1.55],[0.599999999999999,0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.099999999999999,-1.33226762955019e-15,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000002,-0.600000000000002,-0.700000000000002,-0.800000000000002,-0.900000000000002,-1,-1.1,-1.2,-1.3,-1.4,-1.5,-1.6],[0.549999999999999,0.449999999999999,0.349999999999999,0.249999999999999,0.149999999999999,0.0499999999999989,-0.0500000000000014,-0.150000000000001,-0.250000000000001,-0.350000000000001,-0.450000000000002,-0.550000000000002,-0.650000000000002,-0.750000000000002,-0.850000000000002,-0.950000000000002,-1.05,-1.15,-1.25,-1.35,-1.45,-1.55,-1.65],[0.499999999999999,0.399999999999999,0.299999999999999,0.199999999999999,0.0999999999999988,-8.88178419700125e-16,-0.100000000000001,-0.200000000000001,-0.300000000000001,-0.400000000000001,-0.500000000000001,-0.600000000000001,-0.700000000000002,-0.800000000000002,-0.900000000000002,-1,-1.1,-1.2,-1.3,-1.4,-1.5,-1.6,-1.7]],"type":"surface","x":[0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1,1.05,1.1],"y":[0,0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2],"opacity":0.8,"contours":{"x":{"highlight":false},"y":{"highlight":false},"z":{"highlight":false}},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+]
+
+.pull-right[
+AA &lt;i class="fas fa-brain"&gt;&lt;/i&gt;: Interpretieren Sie `\(b_0\)`, `\(b_1\)` und `\(b_2\)` des Regressionsmodells `\(AV = b_0 + b_1 \cdot IUVB + b_2 \cdot IUVC\)` anhand der interaktiven Graphik]
+
+---
+## Einführung Dummykodierung: Lösung Beispiel 2 mit `lm()`
+
+```r
+lm(AV ~ UV, data = data_d_demo2)
+```
+
+```
+## 
+## Call:
+## lm(formula = AV ~ UV, data = data_d_demo2)
+## 
+## Coefficients:
+## (Intercept)          UVB          UVC  
+##         2.5         -2.0         -1.0
+```
+
+---
+### Def.: Dummy-Kodierung (Eid, Gollwitzer &amp; Schmitt, 2013)
+Die Dummy-Codierung erfolgt in folgenden Schritten:  
+
+1. Wähle eine der c Kategorien der unabhängigen Variablen als Referenzkategorie aus.  
+2. Weise dieser Referenzkategorie auf allen Codiervariablen den Wert 0 zu.
+3. Weise allen anderen Kategorien der unabhägigen Variablen Werte auf den Codiervariablen derart zu, dass
+     + jede Kategorie nur auf einer einzigen Codiervariablen einen Wert von 1 aufweist (auf allen anderen Codiervariablen den Wert 0)
+     + jede Codiervariable nur für eine einzige Kategorie den Wert 1 aufweist  für alle anderen den Wert 0.
+
+---
+## Interpretation `\(b_0, \;b_1, \dots\)` unter Dummykodierung
+### nach (Eid, Gollwitzer &amp; Schmitt, 2013)
+Wird ein Regressionsmodell mit Dummyvariablen wie folgt spezifiziert
+`$$AV_i = b_0 + b_1 \cdot I^{Kat2} + b_2 \cdot I^{Kat3} + \dots + \epsilon_i$$`
+können die Regressionsgewichte leicht interpretiert werden:  
+
+* Die Regressionskonstante `\(b_0\)` entspricht dem Mittelwert der abhängigen Variablen in der Referenzkategorie (Kat1)
+* Das Regressionsgewicht `\(b_1\)` der ersten Dummy-Variablen entspricht der Differenz zwischen dem Mittelwert der Kategorie, die auf der Variablen `\(I^{Kat2}\)` eine 1 zugeordnet bekommen hat (hier Kategorie 2), und dem Mittelwert der Referenzgruppe.
+* Das Regressionsgewicht `\(b_2\)` der zweiten Dummy-Variablen entspricht der Differenz zwischen dem Mittelwert der Kategorie, die auf der Variablen `\(I^{Kat3}\)` eine 1 zugeordnet bekommen hat (hier Kategorie 3), und dem Mittelwert der Referenzgruppe.
+* ...
+
+
+---
+class: inverse
+## Worked Example zur Dummykodierung: Palmer Penguins
+&lt;img src="https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+### Wie unterscheiden sich die `Species` in `Bill Depth` und `Bill Length`?
+
+.pull-left[
+
+```r
+library(palmerpenguins)
+sina_plot_penguins &lt;- 
+  penguins %&gt;%
+  select(species, 
+         bill_length_mm, 
+         bill_depth_mm) %&gt;% 
+  gather(variable, value, -species) %&gt;% 
+  ggplot(., aes(variable, value)) +
+  ggforce::geom_sina(color="#8cd000") + 
+  theme_modern_rc() +
+  ylim(c(0,70)) + 
+  labs(title = "Bill length und depth", 
+       subtitle = "in mm")
+```
+
+]
+
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-14-1.png" width="504" /&gt;
+
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"navigation": {
+"scroll": false,
+"click": false,
+"touch": true
+}
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
