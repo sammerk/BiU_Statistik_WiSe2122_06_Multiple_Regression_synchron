@@ -302,3 +302,22 @@ sina_plot_penguins
 ```
 
 ]
+
+---
+## Arbeitsaufträge
+> * AA1: Untersuchen Sie weitere Variablen im `penguins`-Datensatz auf Mittelwertsunterschiede zwischen den Arten mithilfe der Dummykodierung  
+> * AA2: Untersuchen Sie Effekte der Klassengrößenreduktion (UV: `g3classtype`) auf Mathematikleistung (AV: `g3tmathss`) im STAR-Datensatz.
+> * AA3: Untersuchen Sie den effekt nominaler Prädiktoren Ihrer Wahl auf AV Ihrer Wahl im ALLBUS Datensatz
+
+```{r echo = F, results='hide'}
+haven::write_sav(penguins, "penguins.sav")
+haven::write_sav(
+  haven::read_spss("https://raw.githubusercontent.com/sammerk/did_data/master/STAR.sav") %>% 
+    select(g3tmathss, g3classtype),
+  "STAR.sav"
+  )
+
+```
+
+
+Datensätze: `r xfun::embed_file("penguins.sav", "penguins.sav", "penguins.sav")`, `r xfun::embed_file("STAR.sav", "STAR.sav", "STAR.sav")`, (ALLBUS bitte selbst herunterladen)
